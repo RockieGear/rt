@@ -89,13 +89,14 @@ def handle_client(sock):
         remote_port = int(data.split(' ')[-1].strip())
         local_port = unused_port()
         tunnels[remote_port] = f'127.0.0.1:{local_port}'
-        os.system(f'ssh -f -N -L {local_port}:127.0.0.1:{remote_port} localhost')
+        os.system(f'ssh -f -N -D {local_port} -p {remote_port} localhost')
         monitor_thread = threading.Thread(target=monitor_tunnel, args=(remote_port, local_port))
         monitor_thread.start()
     except Exception as e:
         print(e)
     finally:
         sock.close()
+
 
 def start_ssh_server(port):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
